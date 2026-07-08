@@ -1,0 +1,59 @@
+{
+  "name": "study-calendar",
+  "version": "0.1.0",
+  "description": "A learning-focused React, Node.js, and Electron calendar app with reminders.",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "license": "MIT",
+  "author": "",
+  "scripts": {
+    "dev": "concurrently -k \"pnpm:dev:api\" \"pnpm:dev:web\" \"pnpm:dev:electron\"",
+    "dev:web": "vite --host 127.0.0.1 --port 5173",
+    "dev:api": "node server/index.cjs",
+    "dev:electron": "wait-on http://127.0.0.1:5173 http://127.0.0.1:4010/health && cross-env ELECTRON_START_URL=http://127.0.0.1:5173 ELECTRON_MANAGED_API=false electron .",
+    "start:api": "node server/index.cjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "vite build",
+    "build:desktop": "pnpm build && electron-builder --config electron-builder.yml",
+    "release:check": "pnpm lint && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "cors": "latest",
+    "date-fns": "latest",
+    "express": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "concurrently": "latest",
+    "cross-env": "latest",
+    "electron": "latest",
+    "electron-builder": "latest",
+    "eslint": "latest",
+    "globals": "latest",
+    "jsdom": "latest",
+    "vite": "latest",
+    "vitest": "latest",
+    "wait-on": "latest"
+  },
+  "build": {
+    "appId": "com.study.calendar",
+    "productName": "Study Calendar",
+    "files": [
+      "dist/**",
+      "electron/**",
+      "server/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  }
+}

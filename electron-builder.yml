@@ -1,0 +1,18 @@
+appId: com.study.calendar
+productName: Study Calendar
+directories:
+  output: release
+files:
+  - dist/**
+  - electron/**
+  - server/**
+  - package.json
+win:
+  target:
+    - nsis
+mac:
+  target:
+    - dmg
+linux:
+  target:
+    - AppImage
