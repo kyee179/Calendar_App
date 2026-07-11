@@ -1,6 +1,6 @@
 {
   "name": "study-calendar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A learning-focused React, Node.js, and Electron calendar app with reminders.",
   "main": "electron/main.cjs",
   "type": "module",
