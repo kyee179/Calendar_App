@@ -33,10 +33,31 @@ The project is intentionally small enough to understand while still using a real
 
 Prerequisites:
 
-- Node.js 20 or newer
-- pnpm 9 or newer
 - Git
+- `fnm` for Node.js version management
+- Node.js 24.18.0 LTS, installed through `fnm`
+- pnpm 11.7.0, activated through Corepack
 - Optional for publishing: GitHub CLI (`gh`)
+
+This repository includes `.node-version`, `packageManager`, and `engines` settings so each developer uses the same runtime.
+
+First-time Windows setup:
+
+```powershell
+fnm install 24.18.0
+fnm use 24.18.0
+corepack enable
+corepack prepare pnpm@11.7.0 --activate
+```
+
+Verify the environment:
+
+```powershell
+node --version
+pnpm --version
+```
+
+Expected major versions are Node `v24.x` and pnpm `11.x`.
 
 Install dependencies:
 
@@ -84,13 +105,13 @@ See [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md).
 
 ```text
 .
-├── electron/              # Electron main process and preload script
-├── server/                # Express API and JSON storage
-├── src/                   # React frontend
-├── docs/                  # API and data documentation
-├── .github/               # CI, release workflow, issue templates
-├── package.json
-└── README.md
+|-- electron/              # Electron main process and preload script
+|-- server/                # Express API and JSON storage
+|-- src/                   # React frontend
+|-- docs/                  # API and data documentation
+|-- .github/               # CI, release workflow, issue templates
+|-- package.json
+`-- README.md
 ```
 
 ## Roadmap

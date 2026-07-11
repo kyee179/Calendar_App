@@ -6,6 +6,11 @@
   "type": "module",
   "license": "MIT",
   "author": "",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=24.18.0 <25",
+    "pnpm": ">=11.7.0 <12"
+  },
   "scripts": {
     "dev": "concurrently -k \"pnpm:dev:api\" \"pnpm:dev:web\" \"pnpm:dev:electron\"",
     "dev:web": "vite --host 127.0.0.1 --port 5173",
