@@ -1,6 +1,6 @@
 # Study Calendar
 
-Study Calendar is a learning-focused desktop calendar built with React, Node.js, and Electron. It displays the current date and time, shows a month calendar and agenda, stores reminders locally, and lets users create, edit, delete, and preview notifications in this format:
+Study Calendar is A learning-focused desktop calendar built with React, Node.js, and Electron. It displays the current date and time, shows a month calendar and agenda, stores reminders locally, saves daily/weekly journals, bookmarks precious entries, and lets users create, edit, delete, and preview notifications in this format:
 
 ```text
 time: a to b; title; notification format
@@ -15,7 +15,11 @@ The project is intentionally small enough to understand while still using a real
 - Reminder CRUD: create, edit, delete, and list reminders
 - Reminder fields: start/end time, title, notification format, notes, category, repeat, location, color, and notify-before time
 - Basic calendar categories: personal, study, vacation, holiday, birthday, and other
-- Desktop notifications when the app is open and notification permission is granted
+- Daily and weekly journals
+- Bookmark button for precious journals
+- AI planning drafts from journal text, with OpenAI/Gemini/Groq adapters and local fallback rules
+- Weekly summary generation from journal context
+- User-reviewed `Apply Drafts` flow before AI suggestions become calendar events- Desktop notifications when the app is open and notification permission is granted
 - Local JSON storage through a Node.js API
 - Electron shell for a desktop app
 - GitHub Actions CI and release workflow
@@ -65,6 +69,15 @@ Install dependencies:
 pnpm install
 ```
 
+Optional AI provider setup:
+
+```bash
+cp .env.example .env
+# choose AI_PROVIDER=local, openai, gemini, or groq
+# add the matching API key if using a remote provider
+```
+
+The app always keeps a local rule-based fallback, so journal planning still works when an API key is missing or a quota is exhausted.
 Run the API, React app, and Electron together:
 
 ```bash

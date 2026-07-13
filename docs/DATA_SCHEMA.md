@@ -41,3 +41,30 @@ The proof of concept stores data in `server/data/calendar.json` during backend d
 ## Future Upgrade Path
 
 For a production-grade app, replace JSON storage with SQLite first. Keep the same API contract, then map the `events` collection to an `events` table and the `settings` object to a small key-value table.
+
+## Journal
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | string | yes | Unique journal identifier. |
+| `type` | enum | yes | `daily` or `weekly`. |
+| `journalDate` | date string | yes | Journal day or week start date in `YYYY-MM-DD` format. |
+| `title` | string | yes | User-facing journal title. |
+| `content` | string | yes | Journal body text. |
+| `bookmarked` | boolean | yes | Whether this is a precious/saved journal. |
+| `tags` | string[] | no | Optional user tags. |
+| `createdAt` | ISO string | yes | Creation timestamp. |
+| `updatedAt` | ISO string | yes | Last update timestamp. |
+
+## Journal Analysis
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Unique analysis identifier. |
+| `journalId` | string | Source journal. |
+| `provider` | string | `openai`, `gemini`, `groq`, `local`, or `local-fallback`. |
+| `summary` | string | Short analysis summary. |
+| `weeklySummary` | string | Weekly reflection generated from available journal context. |
+| `tasks` | object[] | Extracted tasks with priority, urgency, duration, confidence, and reason. |
+| `scheduleDrafts` | object[] | Draft calendar blocks. These do not become events until applied. |
+| `cautions` | string[] | Provider or confidence warnings. |

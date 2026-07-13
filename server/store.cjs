@@ -6,7 +6,12 @@ const defaultData = {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
     locale: "en-US",
     weekStartsOn: 0,
-    defaultNotifyMinutesBefore: 15
+    defaultNotifyMinutesBefore: 15,
+    aiProvider: "local",
+    dailyAiRequestLimit: 10,
+    defaultAvailability: [
+      { label: "Evening focus", startsAt: "20:00", endsAt: "24:00" }
+    ]
   },
   events: [
     {
@@ -24,14 +29,29 @@ const defaultData = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
-  ]
+  ],
+  journals: [],
+  journalAnalyses: []
 };
+
+function ensureShape(data) {
+  return {
+    settings: { ...defaultData.settings, ...(data.settings || {}) },
+    events: Array.isArray(data.events) ? data.events : [],
+    journals: Array.isArray(data.journals) ? data.journals : [],
+    journalAnalyses: Array.isArray(data.journalAnalyses) ? data.journalAnalyses : []
+  };
+}
 
 function ensureFile(filePath) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, JSON.stringify(defaultData, null, 2));
+    return;
   }
+
+  const current = ensureShape(JSON.parse(fs.readFileSync(filePath, "utf8")));
+  fs.writeFileSync(filePath, JSON.stringify(current, null, 2));
 }
 
 function createStore(filePath) {
@@ -39,11 +59,11 @@ function createStore(filePath) {
 
   function read() {
     const raw = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(raw);
+    return ensureShape(JSON.parse(raw));
   }
 
   function write(data) {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(ensureShape(data), null, 2));
     return data;
   }
 
@@ -90,8 +110,50 @@ function createStore(filePath) {
       data.events = data.events.filter((event) => event.id !== id);
       write(data);
       return data.events.length !== before;
+    },
+    listJournals({ type, bookmarked } = {}) {
+      const data = read();
+      return data.journals
+        .filter((journal) => !type || journal.type === type)
+        .filter((journal) => bookmarked === undefined || journal.bookmarked === bookmarked)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    },
+    getJournal(id) {
+      return read().journals.find((journal) => journal.id === id) || null;
+    },
+    createJournal(journal) {
+      const data = read();
+      data.journals.push(journal);
+      write(data);
+      return journal;
+    },
+    updateJournal(id, patch) {
+      const data = read();
+      const index = data.journals.findIndex((journal) => journal.id === id);
+      if (index === -1) return null;
+      data.journals[index] = { ...data.journals[index], ...patch, id, updatedAt: new Date().toISOString() };
+      write(data);
+      return data.journals[index];
+    },
+    deleteJournal(id) {
+      const data = read();
+      const before = data.journals.length;
+      data.journals = data.journals.filter((journal) => journal.id !== id);
+      data.journalAnalyses = data.journalAnalyses.filter((analysis) => analysis.journalId !== id);
+      write(data);
+      return data.journals.length !== before;
+    },
+    saveJournalAnalysis(analysis) {
+      const data = read();
+      data.journalAnalyses = data.journalAnalyses.filter((item) => item.id !== analysis.id && item.journalId !== analysis.journalId);
+      data.journalAnalyses.push(analysis);
+      write(data);
+      return analysis;
+    },
+    getJournalAnalysis(journalId) {
+      return read().journalAnalyses.find((analysis) => analysis.journalId === journalId) || null;
     }
   };
 }
 
-module.exports = { createStore, defaultData };
+module.exports = { createStore, defaultData, ensureShape };
